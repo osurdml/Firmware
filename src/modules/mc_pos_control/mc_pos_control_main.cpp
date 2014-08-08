@@ -706,7 +706,7 @@ MulticopterPositionControl::task_main()
 						reset_alt_sp();
 
 						/* move altitude setpoint with throttle stick */
-						sp_move_rate(2) = -_pos_sp_triplet.current.vz - 0.5f;
+						_pos_sp(2) = -(_pos_sp_triplet.current.vz);
 					}
 
 					/* limit setpoint move rate */
