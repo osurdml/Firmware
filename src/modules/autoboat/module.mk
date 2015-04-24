@@ -1,2 +1,4 @@
+#autoboat module
+
 MODULE_COMMAND = autoboat
-SRCS = gas_motor.cpp
+SRCS = autoboat.c
