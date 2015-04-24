@@ -250,13 +250,19 @@ void gpio_led_cycle(FAR void *arg)
 	bool updated;
 	orb_check(priv->vehicle_status_sub, &updated);
 
+        printf("GPIO CYCLE\n");
+
 	if (updated) {
 		orb_copy(ORB_ID(vehicle_status), priv->vehicle_status_sub, &priv->status);
 	}
 
         if (priv->status.arming_state == ARMING_STATE_ARMED){
                 ioctl(priv->gpio_fd,GPIO_SET,priv->pin);
-
+                priv->counter++;
+                if (priv->counter > 5) {
+                        priv->counter = 0;
+                        ioctl(priv->gpio_fd, GPIO_CLEAR, priv->pin);
+                }
         }
 //
 //	/* select pattern for current status */
@@ -295,12 +301,7 @@ void gpio_led_cycle(FAR void *arg)
 //		}
 //	}
 //
-	priv->counter++;
 
-	if (priv->counter > 5) {
-		priv->counter = 0;
-                ioctl(priv->gpio_fd, GPIO_CLEAR, priv->pin);
-	}
 
 	/* repeat cycle at 5 Hz */
 	if (gpio_led_started) {
