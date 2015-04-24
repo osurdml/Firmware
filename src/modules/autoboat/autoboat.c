@@ -62,6 +62,7 @@ struct gpio_led_s {
 	int pin;
 	struct vehicle_status_s status;
 	int vehicle_status_sub;
+        bool motor_on;
 	bool led_state;
 	int counter;
 };
@@ -210,6 +211,8 @@ void gpio_led_start(FAR void *arg)
 	} else {
 		gpio_dev = PX4FMU_DEVICE_PATH;
 	}
+        /*initialize motor off*/
+        priv->motor_on = false;
 
 	/* open GPIO device */
 	priv->gpio_fd = open(gpio_dev, 0);
@@ -256,10 +259,11 @@ void gpio_led_cycle(FAR void *arg)
 		orb_copy(ORB_ID(vehicle_status), priv->vehicle_status_sub, &priv->status);
 	}
 
-        if (priv->status.arming_state == ARMING_STATE_ARMED){
+        if (priv->status.arming_state == ARMING_STATE_ARMED && priv->motor_on == false){
                 ioctl(priv->gpio_fd,GPIO_SET,priv->pin);
                 priv->counter++;
                 if (priv->counter > 5) {
+                        priv->motor_on == true;
                         priv->counter = 0;
                         ioctl(priv->gpio_fd, GPIO_CLEAR, priv->pin);
                 }
