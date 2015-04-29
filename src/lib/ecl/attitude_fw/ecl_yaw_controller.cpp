@@ -135,6 +135,8 @@ float ECL_YawController::control_attitude_impl_openloop(const struct ECL_Control
 //		}
 	}
 
+	_rate_setpoint = ctl_data.yaw_setpoint - ctl_data.yaw;
+
 	/* limit the rate */ //XXX: move to body angluar rates
 
 	if (_max_rate > 0.01f) {

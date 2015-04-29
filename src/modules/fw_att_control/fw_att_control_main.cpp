@@ -500,6 +500,7 @@ FixedwingAttitudeControl::parameters_update()
 	_roll_ctrl.set_max_rate(math::radians(_parameters.r_rmax));
 
 	/* yaw control parameters */
+	_yaw_ctrl.set_time_constant(_parameters.tconst);
 	_yaw_ctrl.set_k_p(_parameters.y_p);
 	_yaw_ctrl.set_k_i(_parameters.y_i);
 	_yaw_ctrl.set_k_ff(_parameters.y_ff);
@@ -833,6 +834,7 @@ FixedwingAttitudeControl::task_main()
 
 				float roll_sp = _parameters.rollsp_offset_rad;
 				float pitch_sp = _parameters.pitchsp_offset_rad;
+				float yaw_sp = 0.0f;
 				float yaw_manual = 0.0f;
 				float throttle_sp = 0.0f;
 
@@ -846,6 +848,7 @@ FixedwingAttitudeControl::task_main()
 					/* read in attitude setpoint from attitude setpoint uorb topic */
 					roll_sp = _att_sp.roll_body + _parameters.rollsp_offset_rad;
 					pitch_sp = _att_sp.pitch_body + _parameters.pitchsp_offset_rad;
+					yaw_sp = _att_sp.yaw_body;
 					throttle_sp = _att_sp.thrust;
 
 					/* reset integrals where needed */
@@ -865,6 +868,7 @@ FixedwingAttitudeControl::task_main()
 					roll_sp = (_manual.y * _parameters.man_roll_max - _parameters.trim_roll)
 											+ _parameters.rollsp_offset_rad;
 					pitch_sp = _att_sp.pitch_body + _parameters.pitchsp_offset_rad;
+					yaw_sp = _att_sp.yaw_body;
 					throttle_sp = _att_sp.thrust;
 
 					/* reset integrals where needed */
@@ -908,7 +912,7 @@ FixedwingAttitudeControl::task_main()
 					att_sp.timestamp = hrt_absolute_time();
 					att_sp.roll_body = roll_sp;
 					att_sp.pitch_body = pitch_sp;
-					att_sp.yaw_body = 0.0f - _parameters.trim_yaw;
+					att_sp.yaw_body = yaw_sp + 0.0f - _parameters.trim_yaw;
 					att_sp.thrust = throttle_sp;
 
 					/* lazily publish the setpoint only once available */
@@ -959,6 +963,7 @@ FixedwingAttitudeControl::task_main()
 				control_input.acc_body_z = _accel.z;
 				control_input.roll_setpoint = roll_sp;
 				control_input.pitch_setpoint = pitch_sp;
+				control_input.yaw_setpoint = yaw_sp;
 				control_input.airspeed_min = _parameters.airspeed_min;
 				control_input.airspeed_max = _parameters.airspeed_max;
 				control_input.airspeed = airspeed;
@@ -966,7 +971,7 @@ FixedwingAttitudeControl::task_main()
 				control_input.lock_integrator = lock_integrator;
 
 				/* Run attitude controllers */
-				if (isfinite(roll_sp) && isfinite(pitch_sp)) {
+				if (isfinite(roll_sp) && isfinite(pitch_sp) && isfinite(yaw_sp)) {
 					_roll_ctrl.control_attitude(control_input);
 					_pitch_ctrl.control_attitude(control_input);
 					_yaw_ctrl.control_attitude(control_input); //runs last, because is depending on output of roll and pitch attitude
