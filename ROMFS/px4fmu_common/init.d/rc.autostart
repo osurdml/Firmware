@@ -17,6 +17,7 @@
 # 12000	..	12999		Octo Cox
 # 13000 ..  13999		VTOL
 # 14000 ..  14999       Tri Y
+# 8047  ..                      Boat
 
 #
 # Simulation
@@ -294,3 +295,7 @@ then
 	sh /etc/init.d/50001_axialracing_ax10
 fi
 
+if param compare SYS_AUTOSTART 8047
+then
+        sh /etc/init.d/8047_autoboat_mokai
+fi

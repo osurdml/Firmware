@@ -1,0 +1,25 @@
+#!nsh
+#
+# Standard apps for boat
+# TODO need to use boat controllers
+#
+
+#
+# Start the attitude and position estimator
+#
+ekf_att_pos_estimator start
+
+#
+# Start attitude controller
+#
+bt_att_control start
+bt_pos_control_l1 start
+
+#
+# Start Land Detector
+#
+#land_detector start fixedwing
+
+#
+# Misc apps
+#
