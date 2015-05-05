@@ -41,7 +41,7 @@
 
 #include "limitoverride.h"
 
-namespace fwPosctrl {
+namespace btPosctrl {
 
 bool LimitOverride::applyOverride(BlockOutputLimiter &outputLimiterThrottle,
 		BlockOutputLimiter &outputLimiterPitch)
@@ -68,4 +68,4 @@ bool LimitOverride::applyOverride(BlockOutputLimiter &outputLimiterThrottle,
 	return ret;
 }
 
-} /* namespace fwPosctrl */
+} /* namespace btPosctrl */

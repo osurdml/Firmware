@@ -51,7 +51,7 @@
 #include <uORB/Publication.hpp>
 #include <uORB/topics/tecs_status.h>
 
-namespace fwPosctrl
+namespace btPosctrl
 {
 
 /* Main class of the mTecs */
@@ -151,6 +151,6 @@ protected:
 	void updateTimeMeasurement();
 };
 
-} /* namespace fwPosctrl */
+} /* namespace btPosctrl */
 
 #endif /* MTECS_H_ */

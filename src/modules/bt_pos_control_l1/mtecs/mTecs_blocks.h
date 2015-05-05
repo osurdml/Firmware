@@ -46,7 +46,7 @@
 #include <controllib/blocks.hpp>
 #include <systemlib/err.h>
 
-namespace fwPosctrl
+namespace btPosctrl
 {
 
 using namespace control;

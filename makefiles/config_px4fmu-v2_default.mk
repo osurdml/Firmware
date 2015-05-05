@@ -72,6 +72,7 @@ MODULES		+= modules/mavlink
 MODULES		+= modules/gpio_led
 MODULES		+= modules/uavcan
 MODULES 	+= modules/land_detector
+MODULES		+= modules/autoboat
 
 #
 # Estimation modules (EKF/ SO3 / other filters)
@@ -89,6 +90,8 @@ MODULES		+= modules/fw_att_control
 MODULES		+= modules/mc_att_control
 MODULES		+= modules/mc_pos_control
 MODULES 	+= modules/vtol_att_control
+MODULES		+= modules/bt_att_control
+MODULES		+= modules/bt_pos_control_l1
 
 #
 # Logging

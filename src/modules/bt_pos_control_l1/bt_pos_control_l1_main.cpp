@@ -105,18 +105,18 @@ extern "C" __EXPORT int bt_pos_control_l1_main(int argc, char *argv[]);
 
 using namespace launchdetection;
 
-class FixedwingPositionControl
+class BoatPositionControl
 {
 public:
 	/**
 	 * Constructor
 	 */
-	FixedwingPositionControl();
+	BoatPositionControl();
 
 	/**
 	 * Destructor, also kills the sensors task.
 	 */
-	~FixedwingPositionControl();
+	~BoatPositionControl();
 
 	/**
 	 * Start the sensors task.
@@ -201,7 +201,7 @@ private:
 
 	ECL_L1_Pos_Controller				_l1_control;
 	TECS						_tecs;
-	fwPosctrl::mTecs				_mTecs;
+	btPosctrl::mTecs				_mTecs;
 	enum FW_POSCTRL_MODE {
 		FW_POSCTRL_MODE_AUTO,
 		FW_POSCTRL_MODE_POSITION,
@@ -413,10 +413,10 @@ namespace l1_control
 #endif
 static const int ERROR = -1;
 
-FixedwingPositionControl	*g_control = nullptr;
+BoatPositionControl	*g_control = nullptr;
 }
 
-FixedwingPositionControl::FixedwingPositionControl() :
+BoatPositionControl::BoatPositionControl() :
 
 	_mavlink_fd(-1),
 	_task_should_exit(false),
@@ -451,7 +451,7 @@ FixedwingPositionControl::FixedwingPositionControl() :
 	_sensor_combined(),
 
 /* performance counters */
-	_loop_perf(perf_alloc(PC_ELAPSED, "fw l1 control")),
+	_loop_perf(perf_alloc(PC_ELAPSED, "bt l1 control")),
 
 	_hold_alt(0.0f),
 	_control_position_last_called(0),
@@ -526,7 +526,7 @@ FixedwingPositionControl::FixedwingPositionControl() :
 	parameters_update();
 }
 
-FixedwingPositionControl::~FixedwingPositionControl()
+BoatPositionControl::~BoatPositionControl()
 {
 	if (_control_task != -1) {
 
@@ -552,7 +552,7 @@ FixedwingPositionControl::~FixedwingPositionControl()
 }
 
 int
-FixedwingPositionControl::parameters_update()
+BoatPositionControl::parameters_update()
 {
 
 	/* L1 control parameters */
@@ -660,7 +660,7 @@ FixedwingPositionControl::parameters_update()
 }
 
 void
-FixedwingPositionControl::vehicle_control_mode_poll()
+BoatPositionControl::vehicle_control_mode_poll()
 {
 	bool updated;
 
@@ -672,7 +672,7 @@ FixedwingPositionControl::vehicle_control_mode_poll()
 }
 
 void
-FixedwingPositionControl::vehicle_status_poll()
+BoatPositionControl::vehicle_status_poll()
 {
 	bool updated;
 
@@ -684,7 +684,7 @@ FixedwingPositionControl::vehicle_status_poll()
 }
 
 bool
-FixedwingPositionControl::vehicle_airspeed_poll()
+BoatPositionControl::vehicle_airspeed_poll()
 {
 	/* check if there is an airspeed update or if it timed out */
 	bool airspeed_updated;
@@ -710,7 +710,7 @@ FixedwingPositionControl::vehicle_airspeed_poll()
 }
 
 bool
-FixedwingPositionControl::vehicle_manual_control_setpoint_poll()
+BoatPositionControl::vehicle_manual_control_setpoint_poll()
 {
 	bool manual_updated;
 
@@ -726,7 +726,7 @@ FixedwingPositionControl::vehicle_manual_control_setpoint_poll()
 
 
 void
-FixedwingPositionControl::vehicle_attitude_poll()
+BoatPositionControl::vehicle_attitude_poll()
 {
 	/* check if there is a new position */
 	bool att_updated;
@@ -742,7 +742,7 @@ FixedwingPositionControl::vehicle_attitude_poll()
 }
 
 void
-FixedwingPositionControl::vehicle_sensor_combined_poll()
+BoatPositionControl::vehicle_sensor_combined_poll()
 {
 	/* check if there is a new position */
 	bool sensors_updated;
@@ -754,7 +754,7 @@ FixedwingPositionControl::vehicle_sensor_combined_poll()
 }
 
 void
-FixedwingPositionControl::vehicle_setpoint_poll()
+BoatPositionControl::vehicle_setpoint_poll()
 {
 	/* check if there is a new setpoint */
 	bool pos_sp_triplet_updated;
@@ -766,9 +766,9 @@ FixedwingPositionControl::vehicle_setpoint_poll()
 }
 
 void
-FixedwingPositionControl::task_main_trampoline(int argc, char *argv[])
+BoatPositionControl::task_main_trampoline(int argc, char *argv[])
 {
-	l1_control::g_control = new FixedwingPositionControl();
+	l1_control::g_control = new BoatPositionControl();
 
 	if (l1_control::g_control == nullptr) {
 		warnx("OUT OF MEM");
@@ -782,7 +782,7 @@ FixedwingPositionControl::task_main_trampoline(int argc, char *argv[])
 }
 
 float
-FixedwingPositionControl::calculate_target_airspeed(float airspeed_demand)
+BoatPositionControl::calculate_target_airspeed(float airspeed_demand)
 {
 	float airspeed;
 
@@ -813,7 +813,7 @@ FixedwingPositionControl::calculate_target_airspeed(float airspeed_demand)
 }
 
 void
-FixedwingPositionControl::calculate_gndspeed_undershoot(const math::Vector<2> &current_position, const math::Vector<2> &ground_speed_2d, const struct position_setpoint_triplet_s &pos_sp_triplet)
+BoatPositionControl::calculate_gndspeed_undershoot(const math::Vector<2> &current_position, const math::Vector<2> &ground_speed_2d, const struct position_setpoint_triplet_s &pos_sp_triplet)
 {
 
 	if (pos_sp_triplet.current.valid && !(pos_sp_triplet.current.type == position_setpoint_s::SETPOINT_TYPE_LOITER)) {
@@ -853,7 +853,7 @@ FixedwingPositionControl::calculate_gndspeed_undershoot(const math::Vector<2> &c
 	}
 }
 
-void FixedwingPositionControl::navigation_capabilities_publish()
+void BoatPositionControl::navigation_capabilities_publish()
 {
 	if (_nav_capabilities_pub > 0) {
 		orb_publish(ORB_ID(navigation_capabilities), _nav_capabilities_pub, &_nav_capabilities);
@@ -862,7 +862,7 @@ void FixedwingPositionControl::navigation_capabilities_publish()
 	}
 }
 
-float FixedwingPositionControl::get_terrain_altitude_landing(float land_setpoint_alt, const struct vehicle_global_position_s &global_pos)
+float BoatPositionControl::get_terrain_altitude_landing(float land_setpoint_alt, const struct vehicle_global_position_s &global_pos)
 {
 	if (!isfinite(global_pos.terrain_alt)) {
 		return land_setpoint_alt;
@@ -882,7 +882,7 @@ float FixedwingPositionControl::get_terrain_altitude_landing(float land_setpoint
 }
 
 bool
-FixedwingPositionControl::control_position(const math::Vector<2> &current_position, const math::Vector<3> &ground_speed,
+BoatPositionControl::control_position(const math::Vector<2> &current_position, const math::Vector<3> &ground_speed,
 		const struct position_setpoint_triplet_s &pos_sp_triplet)
 {
 	float dt = FLT_MIN; // Using non zero value to a avoid division by zero
@@ -1357,7 +1357,7 @@ FixedwingPositionControl::control_position(const math::Vector<2> &current_positi
 }
 
 void
-FixedwingPositionControl::task_main()
+BoatPositionControl::task_main()
 {
 
 	/*
@@ -1499,13 +1499,13 @@ FixedwingPositionControl::task_main()
 	_exit(0);
 }
 
-void FixedwingPositionControl::reset_takeoff_state()
+void BoatPositionControl::reset_takeoff_state()
 {
 	launch_detection_state = LAUNCHDETECTION_RES_NONE;
 	launchDetector.reset();
 }
 
-void FixedwingPositionControl::reset_landing_state()
+void BoatPositionControl::reset_landing_state()
 {
 	land_noreturn_horizontal = false;
 	land_noreturn_vertical = false;
@@ -1515,7 +1515,7 @@ void FixedwingPositionControl::reset_landing_state()
 	land_useterrain = false;
 }
 
-void FixedwingPositionControl::tecs_update_pitch_throttle(float alt_sp, float v_sp, float eas2tas,
+void BoatPositionControl::tecs_update_pitch_throttle(float alt_sp, float v_sp, float eas2tas,
 		float pitch_min_rad, float pitch_max_rad,
 		float throttle_min, float throttle_max, float throttle_cruise,
 		bool climbout_mode, float climbout_pitch_min_rad,
@@ -1530,7 +1530,7 @@ void FixedwingPositionControl::tecs_update_pitch_throttle(float alt_sp, float v_
 		if (ground_speed_length > FLT_EPSILON) {
 			flightPathAngle = -asinf(ground_speed(2)/ground_speed_length);
 		}
-		fwPosctrl::LimitOverride limitOverride;
+		btPosctrl::LimitOverride limitOverride;
 		if (_vehicle_status.engine_failure || _vehicle_status.engine_failure_cmd) {
 			/* Force the slow downwards spiral */
 			limitOverride.enablePitchMinOverride(-1.0f);
@@ -1616,7 +1616,7 @@ void FixedwingPositionControl::tecs_update_pitch_throttle(float alt_sp, float v_
 }
 
 int
-FixedwingPositionControl::start()
+BoatPositionControl::start()
 {
 	ASSERT(_control_task == -1);
 
@@ -1625,7 +1625,7 @@ FixedwingPositionControl::start()
 				       SCHED_DEFAULT,
 				       SCHED_PRIORITY_MAX - 5,
 				       1600,
-				       (main_t)&FixedwingPositionControl::task_main_trampoline,
+				       (main_t)&BoatPositionControl::task_main_trampoline,
 				       nullptr);
 
 	if (_control_task < 0) {
@@ -1647,7 +1647,7 @@ int bt_pos_control_l1_main(int argc, char *argv[])
 		if (l1_control::g_control != nullptr)
 			errx(1, "already running");
 
-		if (OK != FixedwingPositionControl::start()) {
+		if (OK != BoatPositionControl::start()) {
 			err(1, "start failed");
 		}
 

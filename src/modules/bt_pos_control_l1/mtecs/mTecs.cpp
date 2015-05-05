@@ -44,7 +44,7 @@
 #include <lib/geo/geo.h>
 #include <stdio.h>
 
-namespace fwPosctrl {
+namespace btPosctrl {
 
 mTecs::mTecs() :
 	SuperBlock(NULL, "MT"),
@@ -314,4 +314,4 @@ void mTecs::debug(const char *fmt, ...) {
 	debug_print(fmt, args);
 }
 
-} /* namespace fwPosctrl */
+} /* namespace btPosctrl */

@@ -1,11 +1,11 @@
 #!nsh
 
-set VEHICLE_TYPE 11
+set MAV_TYPE 11
 
 if [ $AUTOCNF == yes ]
 then
 #
-# Default parameters for boat 
+# Default parameters for boat
 #
 	param set NAV_LAND_ALT 90
 	param set NAV_RTL_ALT 100

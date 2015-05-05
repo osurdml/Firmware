@@ -5,24 +5,6 @@
 # Ryan Skeele <rycoske@gmail.com>
 #
 
-if [ $DO_AUTOCONFIG == yes ]
-then
-  #
-  # Default parameters for this platform
-  #
-  param set FW_ATT_P 3.0
-  param set FW_ATT_I 0.0
-  param set FW_ATT_D 0.0
-fi
-
 sh /etc/init.d/rc.bt_defaults
 
-set VEHICLE_TYPE 11
 set MIXER mokai
-
-set PWM_OUTPUTS 1234
-set PWM_RATE 400
-# DJI ESC range
-set PWM_DISARMED 900
-set PWM_MIN 1200
-set PWM_MAX 1900

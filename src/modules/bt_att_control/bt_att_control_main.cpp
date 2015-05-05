@@ -346,9 +346,9 @@ FixedwingAttitudeControl::FixedwingAttitudeControl() :
 	_actuators_id(0),
 
 /* performance counters */
-	_loop_perf(perf_alloc(PC_ELAPSED, "fw att control")),
-	_nonfinite_input_perf(perf_alloc(PC_COUNT, "fw att control nonfinite input")),
-	_nonfinite_output_perf(perf_alloc(PC_COUNT, "fw att control nonfinite output")),
+	_loop_perf(perf_alloc(PC_ELAPSED, "bt att control")),
+	_nonfinite_input_perf(perf_alloc(PC_COUNT, "bt att control nonfinite input")),
+	_nonfinite_output_perf(perf_alloc(PC_COUNT, "bt att control nonfinite output")),
 /* states */
 	_setpoint_valid(false),
 	_debug(false)
@@ -1122,7 +1122,7 @@ FixedwingAttitudeControl::start()
 	ASSERT(_control_task == -1);
 
 	/* start the task */
-	_control_task = task_spawn_cmd("fw_att_control",
+	_control_task = task_spawn_cmd("bt_att_control",
 				       SCHED_DEFAULT,
 				       SCHED_PRIORITY_MAX - 5,
 				       1600,
@@ -1140,7 +1140,7 @@ FixedwingAttitudeControl::start()
 int bt_att_control_main(int argc, char *argv[])
 {
 	if (argc < 2) {
-		errx(1, "usage: fw_att_control {start|stop|status}");
+		errx(1, "usage: bt_att_control {start|stop|status}");
 	}
 
 	if (!strcmp(argv[1], "start")) {

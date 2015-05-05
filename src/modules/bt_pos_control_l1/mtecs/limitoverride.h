@@ -45,7 +45,7 @@
 
 #include "mTecs_blocks.h"
 
-namespace fwPosctrl
+namespace btPosctrl
 {
 
 /* A small class which provides helper functions to override control output limits which are usually set by
@@ -102,6 +102,6 @@ protected:
 	void disable(bool *flag) { *flag = false; };
 };
 
-} /* namespace fwPosctrl */
+} /* namespace btPosctrl */
 
 #endif /* LIMITOVERRIDE_H_ */
